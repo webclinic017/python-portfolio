@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-IB API - Calculate and store ATR values using historical data
-
-@author: Mayank Rasu (http://rasuquant.com/wp/)
-"""
-
 # Import libraries
 from ibapi.client import EClient
 from ibapi.wrapper import EWrapper
@@ -25,7 +18,7 @@ class TradeApp(EWrapper, EClient):
             self.data[reqId].append({"Date":bar.date,"Open":bar.open,"High":bar.high,"Low":bar.low,"Close":bar.close,"Volume":bar.volume})
         print("reqID:{}, date:{}, open:{}, high:{}, low:{}, close:{}, volume:{}".format(reqId,bar.date,bar.open,bar.high,bar.low,bar.close,bar.volume))
 
-def usTechStk(symbol,sec_type="STK",currency="USD",exchange="ISLAND"):
+def usTechStk(symbol,sec_type="STK",currency="USD",exchange="SMART"):
     contract = Contract()
     contract.symbol = symbol
     contract.secType = sec_type

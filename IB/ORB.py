@@ -98,7 +98,7 @@ class TradeApp(EWrapper, EClient):
             self.pos_df = self.pos_df.append(dictionary, ignore_index=True)
 
     #####   wrapper function for reqExecutions.   this function gives the executed orders
-    def execDetails(self, reqId, contract, execution):
+    """def execDetails(self, reqId, contract, execution):
         super().execDetails(reqId, contract, execution)
         print("ExecDetails. ReqId:", reqId, "Symbol:", contract.symbol, "SecType:", contract.secType, "Currency:", contract.currency, execution)
         dictionary = {"ReqId": reqId, "PermId": execution.permId, "Symbol": contract.symbol,
@@ -107,7 +107,7 @@ class TradeApp(EWrapper, EClient):
                       "Exchange": execution.exchange,
                       "Side": execution.side, "Shares": execution.shares, "Price": execution.price,
                       "AvPrice": execution.avgPrice, "cumQty": execution.cumQty, "OrderRef": execution.orderRef}
-        self.execution_df = self.execution_df.append(dictionary, ignore_index=True)
+        self.execution_df = self.execution_df.append(dictionary, ignore_index=True)"""
 
     #####   this function is operated when the function reqPnLSingle is called. this function gives the p&L of each Ticker
     def pnlSingle(self, reqId, pos, dailyPnL, unrealizedPnL, realizedPnL, value):
@@ -205,7 +205,7 @@ def OrderRefresh(app):
     app.reqOpenOrders()
     time.sleep(2)
 
-
+"""
 def execRefresh(app):
     app.execution_df = pd.DataFrame(columns=['ReqId', 'PermId', 'Symbol',
                                              'SecType', 'Currency', 'ExecId',
@@ -213,7 +213,7 @@ def execRefresh(app):
                                              'Side', 'Shares', 'Price',
                                              'AvPrice', 'cumQty', 'OrderRef'])
     app.reqExecutions(21, ExecutionFilter())
-    time.sleep(2)
+    time.sleep(2)"""
 
 
 def kill_switch(app):
