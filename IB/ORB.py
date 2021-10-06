@@ -15,7 +15,7 @@ import logging
 
 ib_acct = "DU4084935"  # update the ib account (different from real account and paper account)
 tickers = ["PTR"]  # pick tickers with highest gap up or gap down
-pos_size = 10000 #amount in dollars to max out per ticker
+pos_size = 1000 #amount in dollars to max out per ticker
 profit_limit = pos_size*1.03 #amount of profit to take before cutting out
 loss_limit = pos_size*.98 #2% loss limit per share
 
