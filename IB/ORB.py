@@ -14,11 +14,12 @@ import logging
 
 
 ib_acct = "DU4084935"  # update the ib account (different from real account and paper account)
-tickers = ["LUV", "MRK", "GM", "OXY", "TSLA"]  # pick tickers with highest gap up or gap down
-pos_size = 1000 #amount in dollars to max out per ticker
-profit_limit = 200 #amount of profit to take before cutting out
-loss_limit = -100 #loss limit per share
+tickers = ["PTR"]  # pick tickers with highest gap up or gap down
+pos_size = 10000 #amount in dollars to max out per ticker
+profit_limit = pos_size*1.03 #amount of profit to take before cutting out
+loss_limit = pos_size*.98 #2% loss limit per share
 
+print("Ticker: ", tickers, "Position Size: ", pos_size, "Profit Limit: ", profit_limit, "Loss Limit: ", loss_limit)
 
 class TradeApp(EWrapper, EClient):
     def __init__(self):
@@ -98,7 +99,7 @@ class TradeApp(EWrapper, EClient):
             self.pos_df = self.pos_df.append(dictionary, ignore_index=True)
 
     #####   wrapper function for reqExecutions.   this function gives the executed orders
-    """def execDetails(self, reqId, contract, execution):
+    def execDetails(self, reqId, contract, execution):
         super().execDetails(reqId, contract, execution)
         print("ExecDetails. ReqId:", reqId, "Symbol:", contract.symbol, "SecType:", contract.secType, "Currency:", contract.currency, execution)
         dictionary = {"ReqId": reqId, "PermId": execution.permId, "Symbol": contract.symbol,
@@ -107,7 +108,7 @@ class TradeApp(EWrapper, EClient):
                       "Exchange": execution.exchange,
                       "Side": execution.side, "Shares": execution.shares, "Price": execution.price,
                       "AvPrice": execution.avgPrice, "cumQty": execution.cumQty, "OrderRef": execution.orderRef}
-        self.execution_df = self.execution_df.append(dictionary, ignore_index=True)"""
+        self.execution_df = self.execution_df.append(dictionary, ignore_index=True)
 
     #####   this function is operated when the function reqPnLSingle is called. this function gives the p&L of each Ticker
     def pnlSingle(self, reqId, pos, dailyPnL, unrealizedPnL, realizedPnL, value):
@@ -205,7 +206,7 @@ def OrderRefresh(app):
     app.reqOpenOrders()
     time.sleep(2)
 
-"""
+
 def execRefresh(app):
     app.execution_df = pd.DataFrame(columns=['ReqId', 'PermId', 'Symbol',
                                              'SecType', 'Currency', 'ExecId',
@@ -213,7 +214,7 @@ def execRefresh(app):
                                              'Side', 'Shares', 'Price',
                                              'AvPrice', 'cumQty', 'OrderRef'])
     app.reqExecutions(21, ExecutionFilter())
-    time.sleep(2)"""
+    time.sleep(2)
 
 
 def kill_switch(app):
@@ -283,18 +284,23 @@ def openRangeBrkout(app):
                 last_volume = app.hist_data[tickers.index(ticker)][-1]["Volume"]
                 if 2 * app.av_volume[ticker] < last_volume:
                     if app.last_price[tickers.index(ticker)] > app.hi_price[ticker]:
-                        quantity = int(pos_size / app.last_price[tickers.index(ticker)])
-                        tp_price = round(app.last_price[tickers.index(ticker)] * 1.05, 2)
-                        sl_price = app.lo_price[ticker]
+                        quantity = int(pos_size / app.last_price[tickers.index(ticker)]) #calculation  of how many shares to buy. 
+                        print("THIS IS THE QUANTITY:", ticker, quantity) 
+                        tp_price = round(app.last_price[tickers.index(ticker)] * 1.03, 2)
+                        print("The app last price: ", app.last_price)
+                        print("THIS IS THEE TP_PRICE: ", ticker, tp_price)
+                        sl_price = app.lo_price[ticker] #stop loss price calculated by low of the previous 
+                        print("THIS IS THE SL_PRICE: ", ticker, app.lo_price)
                         app.reqIds(-1)
                         time.sleep(2)
                         order_id = app.nextValidOrderId
                         bracket = BracketOrder(order_id, "BUY", quantity, tp_price, sl_price)
+                        print("THIS IS THE BRACKET ORDER FOR: ",ticker, bracket)
                         for o in bracket:
                             app.placeOrder(o.orderId, usStk(ticker), o)
                     if app.last_price[tickers.index(ticker)] < app.lo_price[ticker]:
                         quantity = int(pos_size / app.last_price[tickers.index(ticker)])
-                        tp_price = round(app.last_price[tickers.index(ticker)] * 0.95, 2)
+                        tp_price = round(app.last_price[tickers.index(ticker)] * 0.97, 2)
                         sl_price = app.hi_price[ticker]
                         app.reqIds(-1)
                         time.sleep(2)
