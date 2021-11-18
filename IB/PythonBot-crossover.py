@@ -100,7 +100,7 @@ class Bot:
         time.sleep(1)
         currentBar = Bar()
         # Get symbol info
-        self.symbol = input("Enter the symbol you want to trade : ")
+        self.symbol = input("Enter the stock you want to trade : ")
         # Get bar size
         self.barsize = int(input("Enter the barsize you want to trade in minutes : "))
         mintext = " min"
@@ -200,7 +200,7 @@ class Bot:
                         and bar.close > str(self.sma[len(self.sma) - 1])
                         and lastClose < str(self.sma[len(self.sma) - 2])):
                     # Bracket Order 2% Profit Target 1% Stop Loss
-                    profitTarget = bar.close * 1.02
+                    profitTarget = bar.close * 1.03
                     stopLoss = bar.close * 0.99
                     quantity = 1
                     bracket = self.bracketOrder(orderId, "BUY", quantity, profitTarget, stopLoss)
